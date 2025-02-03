@@ -60,20 +60,19 @@ selected_legends = st.sidebar.multiselect(
 
 
 
-
 # Authentication for Google Sheets using Streamlit Secrets
 def authenticate_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     
-    # Load credentials from Streamlit secrets
-    credentials_dict = st.secrets["gcp"]
-    credentials_json = json.dumps(credentials_dict)
+    # Convert TOML secrets to JSON format
+    credentials_dict = json.loads(st.secrets["gcp"].to_json())  
     
     # Authenticate using the credentials
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(credentials_json), scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
     client = gspread.authorize(creds)
     
     return client
+
 
 
 # Pull data from Google Sheets and convert it to a DataFrame
