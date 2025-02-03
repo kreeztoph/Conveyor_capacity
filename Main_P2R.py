@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime
 import streamlit as st
+import json
 
 
 
@@ -57,12 +58,23 @@ selected_legends = st.sidebar.multiselect(
     default=["Sorted_P4", "Sorted_P3", "Sorted_P2"]
 )
 
-# Authentication for Google Sheets
+
+
+
+# Authentication for Google Sheets using Streamlit Secrets
 def authenticate_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name(r'Json\amazon-pull-data-fb71d4244e27.json', scope)
+    
+    # Load credentials from Streamlit secrets
+    credentials_dict = st.secrets["gcp"]
+    credentials_json = json.dumps(credentials_dict)
+    
+    # Authenticate using the credentials
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(credentials_json), scope)
     client = gspread.authorize(creds)
+    
     return client
+
 
 # Pull data from Google Sheets and convert it to a DataFrame
 @st.cache_data(ttl=60)
