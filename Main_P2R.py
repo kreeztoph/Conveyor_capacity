@@ -84,7 +84,10 @@ def authenticate_google_sheets():
     
     return client
 
-
+def update_time():
+    """Updates the time in the placeholder."""
+    current_time = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
+    time_hold.markdown(f"<h3 style='text-align: right;'>{current_time}</h3>", unsafe_allow_html=True)
 
 
 # Pull data from Google Sheets and convert it to a DataFrame
@@ -112,6 +115,8 @@ def main():
     while True:
         df_pivoted = pull_data_from_google_sheets('Sheet1')
         data = pull_data_from_google_sheets('Sheet2')
+        # Call update_time() inside main or any loop to refresh time
+        update_time()
         # Convert the 'Time' column to datetime format (if needed)
         df_pivoted['Time'] = pd.to_datetime(df_pivoted['Time'], errors='coerce')
         # Convert the 'Time' column to datetime format (if needed)
