@@ -7,14 +7,25 @@ from datetime import datetime
 import streamlit as st
 import json
 
-
-
 # Load your logo image
 logo_url = "Images/LCY3 Logo.png"
-
 # Streamlit UI Setup
 st.set_page_config(page_title="LCY3 P2R Coveyor Capacity", layout="wide")
-st.title("📊 LCY3 P2R Coveyor Capacity")
+# Create layout with three columns
+col1, col2, col3 = st.columns([1, 5, 2])  # Adjust column widths as needed
+
+# Display the logo
+with col1:
+    st.image(logo_url, width=150)  # Adjust width for a bigger logo
+
+# Display the title
+with col2:
+    st.title("LCY3 P2R Conveyor Capacity")
+
+# Placeholder for the date and time (updates dynamically)
+with col3:
+    st.subheader('Last successful sync')
+    time_hold = st.empty()  # Reserve space for the time display
 st.write('Developed by @aakalkri for LCY3 under supervision of @didymiod. Chime during office hours for more feedbacks and suggestions.')
 with st.expander('Chart Info'):
     st.write(f"✅ Green indicates safe levels. 🟡 Orange signals a warning threshold. 🔴 Red represents critical capacity.")
