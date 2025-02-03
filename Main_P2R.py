@@ -65,7 +65,7 @@ def authenticate_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     
     # Directly access Streamlit secrets and parse them as JSON
-    credentials_dict = json.loads(st.secrets["gcp"])  
+    credentials_dict = st.secrets["gcp"] 
     
     # Authenticate using the credentials
     creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
