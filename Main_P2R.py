@@ -70,7 +70,27 @@ selected_legends = st.sidebar.multiselect(
 )
 
 
+def get_contingency_message(value):
+    if value < threshold_1:
+        return "Okay"
+    elif threshold_1 <= value <= threshold_2:
+        return "Run Contingency 1"
+    else:
+        return "Run Contingency 2"
 
+
+# Define a function to apply the color styling
+def colored_card(title, value, message, color):
+    st.markdown(
+        f"""
+        <div style="background-color:{color}; padding:10px; border-radius:10px; text-align:center; color:white; font-size:18px;">
+            <strong>{title}</strong><br>
+            <span style="font-size:24px;">{value:,.0f}</span><br>
+            <strong>{message}</strong>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 # Authentication for Google Sheets using Streamlit Secrets
 def authenticate_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -136,50 +156,25 @@ def main():
             latest_p3 = latest_rows.loc["Sorted_P3", "Value"] if "Sorted_P3" in latest_rows.index else 0
             latest_p2 = latest_rows.loc["Sorted_P2", "Value"] if "Sorted_P2" in latest_rows.index else 0
 
+            # Define contingency messages based on thresholds
+            # Assign messages dynamically
+            contingency_p4 = get_contingency_message(latest_p4)
+            contingency_p3 = get_contingency_message(latest_p3)
+            contingency_p2 = get_contingency_message(latest_p2)
 
-            # Define card colors based on thresholds
-            def get_card_color(value):
-                if value < threshold_1:
-                    return "green"  # Safe
-                elif threshold_1 <= value <= threshold_2:
-                    return "orange"  # Warning
-                else:
-                    return "red"  # Critical
 
-            # Assign colors dynamically
-            card_color_p4 = get_card_color(latest_p4)
-            card_color_p3 = get_card_color(latest_p3)
-            card_color_p2 = get_card_color(latest_p2)
-
-            # Define a function to apply the color styling
-            def colored_card(title, value, color,Percentage_full,Percentage):
-                st.markdown(
-                    f"""
-                    <div style="background-color:{color}; padding:10px; border-radius:10px; text-align:center; color:white; font-size:18px;">
-                        <strong>{title}</strong><br>
-                        <span style="font-size:24px;">{value:,.0f}</span><br>
-                        <strong>{Percentage_full}</strong><br>
-                        <span style="font-size:24px;">{Percentage:,.0f}%</span>
-                        
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
             # Update the Streamlit Card Display
             with card_container:
-                col1, col3,col5 = st.columns(3)  # Using 3 columns for P4, P3, and P2
+                col1, col3, col5 = st.columns(3)  # Using 3 columns for P4, P3, and P2
                 
                 with col1:
-                    colored_card("P2R P4", latest_p4, card_color_p4,r"% Fullnes",(latest_p4/threshold_2)*100)
-                    
+                    colored_card("P2R P4", latest_p4, contingency_p4, get_card_color(latest_p4))
                     
                 with col3:
-                    colored_card("P2R P3", latest_p3, card_color_p3,r"% Fullnes",(latest_p3/threshold_2)*100)
+                    colored_card("P2R P3", latest_p3, contingency_p3, get_card_color(latest_p3))
                 
-                    
                 with col5:
-                    colored_card("P2R P2", latest_p2, card_color_p2,r"% Fullnes",(latest_p2/threshold_2)*100,)
-        
+                    colored_card("P2R P2", latest_p2, contingency_p2, get_card_color(latest_p2))        
 
 
 
