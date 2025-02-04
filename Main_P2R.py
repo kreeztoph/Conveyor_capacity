@@ -109,7 +109,14 @@ def update_time():
     current_time = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
     time_hold.markdown(f"<h3 style='text-align: right;'>{current_time}</h3>", unsafe_allow_html=True)
 
-
+ # Define card colors based on thresholds
+def get_card_color(value):
+    if value < threshold_1:
+        return "green"  # Safe
+    elif threshold_1 <= value <= threshold_2:
+        return "orange"  # Warning
+    else:
+        return "red"  # Critical
 # Pull data from Google Sheets and convert it to a DataFrame
 @st.cache_data(ttl=60)
 def pull_data_from_google_sheets(sheet_name):
@@ -162,6 +169,10 @@ def main():
             contingency_p3 = get_contingency_message(latest_p3)
             contingency_p2 = get_contingency_message(latest_p2)
 
+            # Assign colors dynamically
+            card_color_p4 = get_card_color(latest_p4)
+            card_color_p3 = get_card_color(latest_p3)
+            card_color_p2 = get_card_color(latest_p2)
 
             # Update the Streamlit Card Display
             with card_container:
