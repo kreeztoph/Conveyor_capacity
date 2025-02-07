@@ -95,6 +95,14 @@ def colored_card(title, value, color,Percentage_full,Percentage):
     )
 # Authentication for Google Sheets using Streamlit Secrets
 def authenticate_google_sheets():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    
+    # Directly access Streamlit secrets and parse them as JSON
+    credentials_dict = st.secrets["gcp"] 
+    
+    # Authenticate using the credentials
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+    client = gspread.authorize(creds)
     return client
 
 
