@@ -104,10 +104,6 @@ def authenticate_google_sheets():
     
     return client
 
-def update_time():
-    """Updates the time in the placeholder."""
-    current_time = datetime.now().strftime("%A, %d %B %Y %H:%M:%S")
-    time_hold.markdown(f"<h3 style='text-align: right;'>{current_time}</h3>", unsafe_allow_html=True)
 
  # Define card colors based on thresholds
 def get_card_color(value):
@@ -146,8 +142,6 @@ def main():
     while True:
         df_pivoted = pull_data_from_google_sheets('Sheet1')
         data = pull_data_from_google_sheets('Sheet2')
-        # Call update_time() inside main or any loop to refresh time
-        update_time()
         # Convert the 'Time' column to datetime format (if needed)
         df_pivoted['Time'] = pd.to_datetime(df_pivoted['Time'], errors='coerce')
         data['Time'] = pd.to_datetime(data['Time'], errors='coerce')
@@ -156,6 +150,11 @@ def main():
         
         # Ensure df_pivoted exists and is not empty
         if not df_pivoted.empty:
+            # Get the latest timestamp from the data and display it
+            last_timestamp = df_pivoted.index[-1] if not df_pivoted.empty else None
+            if last_timestamp:
+                time_hold.markdown(f"<h3 style='text-align: right;'>Last Data Pull: {last_timestamp.strftime('%A, %d %B %Y %H:%M:%S')}</h3>", unsafe_allow_html=True)
+
             latest_rows = data.groupby("Label").last()
 
             latest_p4 = latest_rows.loc["Sorted_P4", "Value"] if "Sorted_P4" in latest_rows.index else 0
