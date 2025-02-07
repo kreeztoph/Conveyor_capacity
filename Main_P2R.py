@@ -130,15 +130,19 @@ def pull_data_from_google_sheets(sheet_name):
     df = pd.DataFrame(data)
     return df
 
+# Importing st_autorefresh
+from streamlit_autorefresh import st_autorefresh
+
 def main():
-    
     # Placeholder for the Card
     card_container = st.empty()
 
     # Live Graph Streaming
     graph_container = st.empty()
-    
-    
+
+    # Auto-refresh every 60 seconds
+    st_autorefresh(interval=60 * 1000, key="data_refresh")
+
     while True:
         df_pivoted = pull_data_from_google_sheets('Sheet1')
         data = pull_data_from_google_sheets('Sheet2')
@@ -146,37 +150,28 @@ def main():
         update_time()
         # Convert the 'Time' column to datetime format (if needed)
         df_pivoted['Time'] = pd.to_datetime(df_pivoted['Time'], errors='coerce')
-        # Convert the 'Time' column to datetime format (if needed)
         data['Time'] = pd.to_datetime(data['Time'], errors='coerce')
         
-        # Set 'Time' as the index
         df_pivoted.set_index('Time', inplace=True)
-        
         
         # Ensure df_pivoted exists and is not empty
         if not df_pivoted.empty:
-            # Get the latest values for each label based on the last row
-            latest_rows = data.groupby("Label").last()  # Get the last row per Label
+            latest_rows = data.groupby("Label").last()
 
-            # Extract values safely
             latest_p4 = latest_rows.loc["Sorted_P4", "Value"] if "Sorted_P4" in latest_rows.index else 0
             latest_p3 = latest_rows.loc["Sorted_P3", "Value"] if "Sorted_P3" in latest_rows.index else 0
             latest_p2 = latest_rows.loc["Sorted_P2", "Value"] if "Sorted_P2" in latest_rows.index else 0
 
-            # Define contingency messages based on thresholds
-            # Assign messages dynamically
             contingency_p4 = get_contingency_message(latest_p4)
             contingency_p3 = get_contingency_message(latest_p3)
             contingency_p2 = get_contingency_message(latest_p2)
 
-            # Assign colors dynamically
             card_color_p4 = get_card_color(latest_p4)
             card_color_p3 = get_card_color(latest_p3)
             card_color_p2 = get_card_color(latest_p2)
 
-            # Update the Streamlit Card Display
             with card_container:
-                col1, col3, col5 = st.columns(3)  # Using 3 columns for P4, P3, and P2
+                col1, col3, col5 = st.columns(3)
                 
                 with col1:
                     colored_card("P2R P4", latest_p4, contingency_p4, get_card_color(latest_p4))
@@ -185,9 +180,7 @@ def main():
                     colored_card("P2R P3", latest_p3, contingency_p3, get_card_color(latest_p3))
                 
                 with col5:
-                    colored_card("P2R P2", latest_p2, contingency_p2, get_card_color(latest_p2))        
-
-
+                    colored_card("P2R P2", latest_p2, contingency_p2, get_card_color(latest_p2))
 
             # Create Interactive Plotly Graph
             fig = go.Figure()
@@ -201,14 +194,12 @@ def main():
                         y0=threshold_2, y1=max(data["Value"].max(), threshold_2 * 1.2),
                         fillcolor="red", opacity=0.3, layer="below", line_width=0)
 
-            # Plot Data
             for column in selected_legends:
                 if column in df_pivoted.columns:
                     fig.add_trace(go.Scatter(x=df_pivoted.index, y=df_pivoted[column], 
                                         mode="lines+markers", name=column,
                                         line=dict(width=2)))
 
-            # Layout Customization
             fig.update_layout(
                 title="Live Data with Threshold Zones",
                 xaxis_title="Time",
@@ -223,19 +214,16 @@ def main():
                     xanchor="center",
                     x=0.5
                 ),
-                # Set xaxis range to avoid leaving spaces
                 xaxis=dict(
-                    range=[data["Time"].min(), data["Time"].max()]  # Ensures the x-axis starts from the first value
+                    range=[data["Time"].min(), data["Time"].max()]
                 ),
                 autosize=True,
-                margin=dict(l=40, r=40, t=40, b=40),  # Adjust margins if needed
+                margin=dict(l=40, r=40, t=40, b=40),
             )
 
-            # Show in Streamlit with unique key
             with graph_container:
                 st.plotly_chart(fig, use_container_width=True, key=f"chart_{time.time()}")
-            
-        time.sleep(60)  # Refresh every 30 seconds
+
         
 if __name__ == "__main__":
     main()
