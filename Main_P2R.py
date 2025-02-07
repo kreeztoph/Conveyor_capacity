@@ -80,17 +80,17 @@ def get_contingency_message(value):
 
 
 # Define a function to apply the color styling
-def colored_card(title, value, color,Percentage_full,Percentage):
+def colored_card(title, value, message, color):
     st.markdown(
-    f"""
-    <div style="background-color:{color}; padding:10px; border-radius:10px; text-align:center; color:white; font-size:18px;">
-        <strong>{title}</strong><br>
-        <span style="font-size:24px;">{value:,.0f}</span><br>
-        <strong>{message}</strong>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+        f"""
+        <div style="background-color:{color}; padding:10px; border-radius:10px; text-align:center; color:white; font-size:18px;">
+            <strong>{title}</strong><br>
+            <span style="font-size:24px;">{value:,.0f}</span><br>
+            <strong>{message}</strong>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 # Authentication for Google Sheets using Streamlit Secrets
 def authenticate_google_sheets():
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
