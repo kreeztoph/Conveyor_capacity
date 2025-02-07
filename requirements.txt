@@ -3,5 +3,5 @@ oauth2client
 pandas
 plotly
 streamlit
-st_autorefresh
-numpy
+streamlit-autorefresh
+
