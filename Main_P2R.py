@@ -235,8 +235,8 @@ def main():
                 
             time.sleep(60)  # Refresh every 30 seconds
         except Exception as e:
-        st.warning(f"An error occurred: {e}. Retrying in 10 seconds.")
-        time.sleep(10)  
+            st.warning(f"An error occurred: {e}. Retrying in 10 seconds.")
+            time.sleep(10)  
         
 if __name__ == "__main__":
     main()
