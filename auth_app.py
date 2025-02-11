@@ -4,14 +4,21 @@ import re
 
 app = Flask(__name__)
 
-ALLOWED_SUFFIX_PATTERN = r'^ant\.amazon\.com$'
+# Allow local testing and correct Amazon domain
+ALLOWED_SUFFIX_PATTERN = r'.*\.?ant\.amazon\.com$'
 
 @app.route('/')
 def index():
-    dns_suffix = socket.getfqdn(request.remote_addr)
-    if re.match(ALLOWED_SUFFIX_PATTERN, dns_suffix):
-        print(dns_suffix)
+    remote_addr = request.remote_addr  # Get client IP
+    fqdn = socket.getfqdn(remote_addr)  # Resolve to domain
+
+    print(f"Remote Addr: {remote_addr}, Resolved FQDN: {fqdn}")  # Debugging output
+
+    if remote_addr == "127.0.0.1" or re.search(ALLOWED_SUFFIX_PATTERN, fqdn):
         return "Access granted"
     else:
-        print(dns_suffix)
         abort(403, "Access denied")
+
+if __name__ == "__main__":
+    app.run(port=5001, debug=True)
+
