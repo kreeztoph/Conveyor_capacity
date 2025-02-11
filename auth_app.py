@@ -15,6 +15,3 @@ def index():
     else:
         print(dns_suffix)
         abort(403, "Access denied")
-
-if __name__ == '__main__':
-    app.run(port=8704)
