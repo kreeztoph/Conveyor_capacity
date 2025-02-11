@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from auth_app import app
 
 # Function to run the Flask app
 def run_flask_app():
