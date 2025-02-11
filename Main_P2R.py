@@ -8,24 +8,25 @@ from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Function to run the Flask app for authentication
+# Function to run the Flask app
 def run_flask_app():
-    from auth_app import app
+    app.run(port=5001, debug=False, use_reloader=False)
 
-# Start the Flask app in a separate thread
-flask_thread = threading.Thread(target=run_flask_app)
+# Start Flask in a separate thread to avoid blocking Streamlit
+flask_thread = threading.Thread(target=run_flask_app, daemon=True)
 flask_thread.start()
 
 # Function to check authentication
 def check_authentication():
-    try:
-        response = requests.get('http://localhost:5001/')
-        if response.status_code == 200:
-            return True
-        else:
-            return False
-    except requests.exceptions.RequestException:
-        return False
+    for _ in range(5):  # Retry authentication for 5 seconds
+        try:
+            response = requests.get('http://localhost:5001/')
+            if response.status_code == 200:
+                return True
+        except requests.exceptions.RequestException:
+            time.sleep(1)  # Wait before retrying
+    return False  # Authentication failed
+
 
 # Streamlit UI Setup
 st.set_page_config(page_title="LCY3 P2R Conveyor Capacity", layout="wide")
