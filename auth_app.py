@@ -4,7 +4,7 @@ import re
 
 app = Flask(__name__)
 
-ALLOWED_SUFFIX_PATTERN = 'ant.amazon.com'
+ALLOWED_SUFFIX_PATTERN = r'^ant\.amazon\.com$'
 
 @app.route('/')
 def index():
