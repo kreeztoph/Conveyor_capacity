@@ -10,9 +10,11 @@ ALLOWED_SUFFIX_PATTERN = r'^ant\.amazon\.com$'
 def index():
     dns_suffix = socket.getfqdn(request.remote_addr)
     if re.match(ALLOWED_SUFFIX_PATTERN, dns_suffix):
+        print(dns_suffix)
         return "Access granted"
     else:
+        print(dns_suffix)
         abort(403, "Access denied")
 
 if __name__ == '__main__':
-    app.run(port=5001)
+    app.run(port=1605)
