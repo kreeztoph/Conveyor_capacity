@@ -11,7 +11,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Function to run the Flask app for authentication
 def run_flask_app():
     from auth_app import app
-    app.run(port=1605)
 
 # Start the Flask app in a separate thread
 flask_thread = threading.Thread(target=run_flask_app)
