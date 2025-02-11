@@ -235,7 +235,7 @@ def main():
                 
             time.sleep(60)  # Refresh every 30 seconds
         except Exception as e:
-            time.sleep(10)  
+            time.sleep(60)  
         
 if __name__ == "__main__":
     main()
