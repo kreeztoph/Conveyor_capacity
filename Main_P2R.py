@@ -233,9 +233,9 @@ def main():
                 with graph_container:
                     st.plotly_chart(fig, use_container_width=True, key=f"chart_{time.time()}")
                 
-            time.sleep(60)  # Refresh every 30 seconds
+            time.sleep(30)  # Refresh every 30 seconds
         except Exception as e:
-            time.sleep(60)  
+            time.sleep(30)  
         
 if __name__ == "__main__":
     main()
