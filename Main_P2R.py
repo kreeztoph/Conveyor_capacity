@@ -113,7 +113,7 @@ def get_card_color(value):
     else:
         return "red"  # Critical
 # Pull data from Google Sheets and convert it to a DataFrame
-@st.cache_data(ttl=60)
+@st.cache_data(ttl=30)
 def pull_data_from_google_sheets(sheet_name):
     client = authenticate_google_sheets()
     sheet = client.open("Data_Pull_Minute").worksheet(sheet_name)
